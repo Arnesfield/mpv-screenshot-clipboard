@@ -24,6 +24,7 @@ for log_level in string.gmatch(options.disable_osd_messages, '([^,]+)') do
   end
 end
 
+---@param file_path string
 local function get_mime_type(file_path)
   local result = mp.command_native({
     name = 'subprocess',
@@ -36,6 +37,7 @@ local function get_mime_type(file_path)
   return result.status == 0 and result.stdout:gsub('[\r\n]+$', '') or 'image/png'
 end
 
+---@param file_path string
 local function run_xclip_async(file_path)
   local mime_type = get_mime_type(file_path)
   local args      = {
@@ -56,11 +58,12 @@ local function run_xclip_async(file_path)
   }, function(success, result)
     -- only report errors since xclip doesn't exit to preserve the image in clipboard
     if not success or result.status ~= 0 then
-      mp.msg.error('Screenshot (xclip exit code: ' .. result.status .. "): '" .. file_path .. "'")
+      mp.msg.error(string.format("Screenshot (xclip exit code %d): '%s'", result.status, file_path))
     end
   end)
 end
 
+---@param flag string|nil
 local function screenshot_xclip(flag)
   local cmd = { 'screenshot' };
   if flag then
@@ -77,7 +80,7 @@ local function screenshot_xclip(flag)
       end
     elseif result and result.filename then
       -- result can be nil (e.g., for 'each-frame' flag)
-      local message = "Screenshot: '" .. result.filename .. "'"
+      local message = string.format("Screenshot: '%s'", result.filename)
 
       mp.msg.info(message)
       if not disabled_osd_log_level.info then
