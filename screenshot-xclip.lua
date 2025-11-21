@@ -63,11 +63,11 @@ local function run_xclip_async(file_path)
   end)
 end
 
----@param flag string|nil
-local function screenshot_xclip(flag)
+---@param arg string|nil
+local function screenshot_xclip(arg)
   local cmd = { 'screenshot' };
-  if flag then
-    table.insert(cmd, flag)
+  if arg then
+    table.insert(cmd, arg)
   end
 
   mp.command_native_async(cmd, function(success, result, error)
