@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+
+file_path=$1
+mime_type=$(file -Eb --mime-type "$file_path") || exit 1
+
+if [ "$XDG_SESSION_TYPE" = 'wayland' ]; then
+  wl-copy --type "$mime_type" < "$file_path"
+else
+  xclip -selection clipboard -target "$mime_type" -i "$file_path"
+fi
